@@ -1,8 +1,10 @@
 package configloader
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jinzhu/configor"
+	"goutil/filesystem"
 )
 
 const (
@@ -13,6 +15,13 @@ const (
 )
 
 func Load(configPath string, configFileType int, config interface{}) error {
+	existed, err := filesystem.IsPathExisted(configPath)
+	if err != nil {
+		return err
+	}
+	if !existed {
+		return errors.New("configPath is wrong.")
+	}
 	switch configFileType {
 	case CONFIG_YAML:
 		return loadYaml(configPath, config)
