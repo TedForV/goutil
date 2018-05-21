@@ -17,3 +17,18 @@ func TestIsValidMobile(t *testing.T) {
 	s = "185030609721"
 	assert.Equal(t, false, IsValidMobile(s), "is not valid")
 }
+
+func TestNewUUID(t *testing.T) {
+	s, err := NewUUID(UUID_TYPE_CANONICAL)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(s)
+	s, err = NewUUID(UUID_TYPE_HASH_LIKE)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(s)
+}
