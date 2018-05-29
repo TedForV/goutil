@@ -14,30 +14,33 @@ const (
 )
 
 type BaseGorm struct {
-	DB *gorm.DB
+	//DB *gorm.DB
 	//MaxIdleConn    int
 	//MaxOpenConn    int
 	//LifetimeOfConn time.Duration
 	ConnStr string
+	DBType  DBType
 }
 
-func NewBaseGorm(connStr string, dbType DBType) (*BaseGorm, error) {
-	db, err := gorm.Open(string(dbType), connStr)
-	if err != nil {
-		return nil, err
-	}
+func NewBaseGorm(connStr string, dbType DBType) *BaseGorm {
+
 	//db.DB().SetMaxIdleConns(maxIdleConn)
 	//db.DB().SetMaxOpenConns(maxOpenConn)
 	//db.DB().SetConnMaxLifetime(lifetime)
 	return &BaseGorm{
-		db,
+		//db,
 		//maxIdleConn,
 		//maxOpenConn,
 		//lifetime,
 		connStr,
-	}, nil
+		dbType,
+	}
 }
 
 func (bg *BaseGorm) NewConn() *gorm.DB {
-	return bg.DB.New()
+	db, err := gorm.Open(string(bg.DBType), bg.ConnStr)
+	if err != nil {
+		panic(err)
+	}
+	return db
 }
