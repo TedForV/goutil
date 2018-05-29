@@ -14,7 +14,7 @@ func Reverse(s string) string {
 	return string(reverse(r))
 }
 
-const MOBILE_REGEX = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}$"
+const MOBILE_REGEX = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9])|(17[0-9]))\\d{8}$"
 
 func IsValidMobile(mobileNo string) bool {
 	reg := regexp.MustCompile(MOBILE_REGEX)
