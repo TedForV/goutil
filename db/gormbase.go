@@ -37,10 +37,10 @@ func NewBaseGorm(connStr string, dbType DBType) *BaseGorm {
 	}
 }
 
-func (bg *BaseGorm) NewConn() *gorm.DB {
+func (bg *BaseGorm) NewConn() (*gorm.DB, error) {
 	db, err := gorm.Open(string(bg.DBType), bg.ConnStr)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return db
+	return db, nil
 }
