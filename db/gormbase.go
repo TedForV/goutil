@@ -2,7 +2,6 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
 type DBType string
@@ -15,26 +14,26 @@ const (
 )
 
 type BaseGorm struct {
-	DB             *gorm.DB
-	MaxIdleConn    int
-	MaxOpenConn    int
-	LifetimeOfConn time.Duration
-	ConnStr        string
+	DB *gorm.DB
+	//MaxIdleConn    int
+	//MaxOpenConn    int
+	//LifetimeOfConn time.Duration
+	ConnStr string
 }
 
-func NewBaseGorm(connStr string, maxIdleConn int, maxOpenConn int, lifetime time.Duration, dbType DBType) (*BaseGorm, error) {
+func NewBaseGorm(connStr string, dbType DBType) (*BaseGorm, error) {
 	db, err := gorm.Open(string(dbType), connStr)
 	if err != nil {
 		return nil, err
 	}
-	db.DB().SetMaxIdleConns(maxIdleConn)
-	db.DB().SetMaxOpenConns(maxOpenConn)
-	db.DB().SetConnMaxLifetime(lifetime)
+	//db.DB().SetMaxIdleConns(maxIdleConn)
+	//db.DB().SetMaxOpenConns(maxOpenConn)
+	//db.DB().SetConnMaxLifetime(lifetime)
 	return &BaseGorm{
 		db,
-		maxIdleConn,
-		maxOpenConn,
-		lifetime,
+		//maxIdleConn,
+		//maxOpenConn,
+		//lifetime,
 		connStr,
 	}, nil
 }
