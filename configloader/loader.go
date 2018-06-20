@@ -3,8 +3,8 @@ package configloader
 import (
 	"errors"
 	"fmt"
+	"github.com/TedForV/goutil/filesystem"
 	"github.com/jinzhu/configor"
-	"goutil/filesystem"
 )
 
 const (
