@@ -79,6 +79,15 @@ func (tn *TrieNode) isMatched(words []rune) (bool, []rune) {
 		return true, []rune{tn.Value}
 	}
 	if _, existed := tn.Children[words[0]]; existed {
+
+		if len(words) == 1 {
+			if tn.Value == ROOT_RUNE {
+				return true, words
+			} else {
+				return false, nil
+			}
+		}
+
 		result, keys := tn.Children[words[0]].isMatched(words[1:])
 		if result {
 			if tn.Value == ROOT_RUNE {
