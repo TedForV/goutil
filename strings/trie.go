@@ -1,5 +1,7 @@
 package strings
 
+import "log"
+
 const (
 	ROOT_RUNE rune = 9999
 )
@@ -44,6 +46,11 @@ func (t *Trie) InsertKey(key string) {
 }
 
 func (t *Trie) IsExisted(content string) (bool, string) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Printf("input: %s", content)
+		}
+	}()
 	if len(content) == 0 {
 		return false, ""
 	}
@@ -79,7 +86,6 @@ func (tn *TrieNode) isMatched(words []rune) (bool, []rune) {
 		return true, []rune{tn.Value}
 	}
 	if _, existed := tn.Children[words[0]]; existed {
-
 		if len(words) == 1 {
 			if tn.Value == ROOT_RUNE {
 				return true, words
