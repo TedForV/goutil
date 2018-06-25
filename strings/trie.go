@@ -48,6 +48,7 @@ func (t *Trie) InsertKey(key string) {
 func (t *Trie) IsExisted(content string) (bool, string) {
 	defer func() {
 		if err := recover(); err != nil {
+			log.Print(err)
 			log.Printf("input: %s", content)
 		}
 	}()
