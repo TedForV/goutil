@@ -1,13 +1,14 @@
 package kit
 
 import (
-	"context"
 	"github.com/go-kit/kit/sd/etcdv3"
 
+	"context"
+	"errors"
+	"fmt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd"
 	"github.com/go-kit/kit/sd/lb"
-	"time"
 )
 
 var lbs map[string]lb.Balancer
@@ -16,14 +17,19 @@ func init() {
 	lbs = make(map[string]lb.Balancer)
 }
 
-func InitialKitGrpc(etcdConfig ETCD3Config, servicePrefix string, f sd.Factory) {
-	etcdClient, err := etcdv3.NewClient(context.Background(),
-		[]string{
-			etcdConfig.Server},
-		etcdv3.ClientOptions{
-			DialTimeout:   etcdConfig.DialTimeout,
-			DialKeepAlive: etcdConfig.DialKeepAlive,
-		})
+func InitialKitGrpc(etcdConfig *ETCD3Config, servicePrefix string, f sd.Factory) {
+	//etcdClient, err := etcdv3.NewClient(context.Background(),
+	//	[]string{
+	//		etcdConfig.Server},
+	//	etcdv3.ClientOptions{
+	//		DialTimeout:   etcdConfig.DialTimeout,
+	//		DialKeepAlive: etcdConfig.DialKeepAlive,
+	//	})
+	//if err != nil {
+	//	panic(err)
+	//}
+	etcdClient, err := NewClient(etcdConfig)
+
 	if err != nil {
 		panic(err)
 	}
@@ -47,12 +53,11 @@ func GetGrpcBalancer(servicePrefix string) (lb.Balancer, bool) {
 	return balancer, ok
 }
 
-func RPC() {
-
-}
-
-type ETCD3Config struct {
-	Server        string
-	DialTimeout   time.Duration
-	DialKeepAlive time.Duration
+func RPC(servicePrefix string, req interface{}) (interface{}, error) {
+	if lb, ok := GetGrpcBalancer(servicePrefix); ok {
+		reqEp, _ := lb.Endpoint()
+		return reqEp(context.Background(), req)
+	} else {
+		return nil, errors.New(fmt.Sprintf("No such service: %s", servicePrefix))
+	}
 }
