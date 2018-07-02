@@ -2,6 +2,7 @@ package servicehook
 
 import (
 	"context"
+	"github.com/TedForV/goutil/log/logrus.hooks"
 	"github.com/TedForV/goutil/ms/kit"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/sd"
@@ -9,11 +10,6 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"rpc_log/pb"
-)
-
-const (
-	Error_Trace_Name   = "Trace"
-	Error_AddInfo_Name = "AdditionalInfo"
 )
 
 type ErrorLogServiceHook struct {
@@ -56,8 +52,8 @@ func (hook *ErrorLogServiceHook) Fire(entry *logrus.Entry) error {
 		ServiceTypeId:  int32(hook.ServiceTypeId),
 		ProjectAddress: hook.Address,
 		Msg:            entry.Message,
-		Trace:          entry.Data[Error_Trace_Name].(string),
-		AdditionalInfo: entry.Data[Error_AddInfo_Name].(string),
+		Trace:          entry.Data[logrus_hooks.Error_Trace_Name].(string),
+		AdditionalInfo: entry.Data[logrus_hooks.Error_AddInfo_Name].(string),
 	})
 
 	if err != nil {

@@ -6,16 +6,12 @@ const (
 )
 
 type BaseMSConfig struct {
-	IP          string      `yaml:"ip"`
-	Port        int         `yaml:"port"`
-	Env         string      `yaml:"env"`
-	ServiceInfo ServiceInfo `yaml:"serviceInfo"`
-	EtcdInfo    ETCDInfo    `yaml:"etcdInfo"`
-}
-
-type ETCDInfo struct {
-	EtcdServer string `yaml:"etcdServer"`
-	Instance   string `yaml:"instance"`
+	IP                 string      `yaml:"ip"`
+	Port               int         `yaml:"port"`
+	Env                string      `yaml:"env"`
+	ServiceInfo        ServiceInfo `yaml:"serviceInfo"`
+	EtcdServer         string      `yaml:"etcdServer"`
+	LocalLogFolderPath string      `yaml:"localLogFolderPath"`
 }
 
 type ServiceInfo struct {

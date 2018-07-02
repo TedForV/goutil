@@ -1,6 +1,7 @@
 package servicehook
 
 import (
+	"github.com/TedForV/goutil/log/logrus.hooks"
 	"github.com/TedForV/goutil/ms/kit"
 	"github.com/sirupsen/logrus"
 	"testing"
@@ -15,5 +16,5 @@ func TestNewErrorLogServiceHook(t *testing.T) {
 	}, "/service/log")
 	logrus.AddHook(hook)
 
-	logrus.WithField(Error_Trace_Name, "Trace details...").Error("ms error log test")
+	logrus.WithField(logrus_hooks.Error_Trace_Name, "Trace details...").Error("ms error log test")
 }
