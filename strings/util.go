@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// Reverse return a reserved string
 func Reverse(s string) string {
 	if len(s) == 0 {
 		return s
@@ -14,20 +15,25 @@ func Reverse(s string) string {
 	return string(reverse(r))
 }
 
+// define mobile regex
 const MOBILE_REGEX = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9])|(17[0-9]))\\d{8}$"
 
+// IsValidMobile returns a string is a phone No. or not
 func IsValidMobile(mobileNo string) bool {
 	reg := regexp.MustCompile(MOBILE_REGEX)
 	return reg.MatchString(mobileNo)
 }
 
+// UUIDType define uuid display type ,int
 type UUIDType int
 
+// define the uuid types
 const (
 	UUID_TYPE_HASH_LIKE UUIDType = iota
 	UUID_TYPE_CANONICAL
 )
 
+// NewUUID is a func that create a new uuid and returns
 func NewUUID(t UUIDType) (string, error) {
 	id, err := uuid.NewV1()
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// NewClient is a new func for Client
 func NewClient(etcdConfig *ETCD3Config) (etcdv3.Client, error) {
 	etcdClient, err := etcdv3.NewClient(context.Background(),
 		[]string{
@@ -18,6 +19,7 @@ func NewClient(etcdConfig *ETCD3Config) (etcdv3.Client, error) {
 	return etcdClient, err
 }
 
+// RegisterService is a func that register the service in etcd
 func RegisterService(etcdConfig *ETCD3Config, servicePrefix string, instance string) {
 	etcdClient, err := NewClient(etcdConfig)
 	if err != nil {
@@ -31,6 +33,7 @@ func RegisterService(etcdConfig *ETCD3Config, servicePrefix string, instance str
 	register.Register()
 }
 
+// ETCD3Config is the etcd config model
 type ETCD3Config struct {
 	Server        string
 	DialTimeout   time.Duration

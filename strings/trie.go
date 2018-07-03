@@ -19,7 +19,7 @@ type Trie struct {
 	Root *TrieNode
 }
 
-// New method for a trie node
+// NewTrieNode is a new func for a trie node
 func NewTrieNode(value rune) *TrieNode {
 	node := new(TrieNode)
 	node.Children = make(map[rune]*TrieNode)
@@ -28,14 +28,14 @@ func NewTrieNode(value rune) *TrieNode {
 	return node
 }
 
-// New method for a trie tree
+// NewTrie is a new func for a trie tree
 func NewTrie() Trie {
 	var r Trie
 	r.Root = NewTrieNode(ROOT_RUNE)
 	return r
 }
 
-// this func is insert key into the trie tree
+// InsertKey is a  func that insert key into the trie tree
 func (t *Trie) InsertKey(key string) {
 	if len(key) == 0 {
 		return
@@ -51,7 +51,7 @@ func (t *Trie) InsertKey(key string) {
 	node.End = true
 }
 
-// This func return the existed key
+// IsExisted is a func that return the existed key
 func (t *Trie) IsExisted(content string) (bool, string) {
 	defer func() {
 		if err := recover(); err != nil {

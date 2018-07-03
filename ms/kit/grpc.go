@@ -45,6 +45,7 @@ func GetGrpcBalancer(servicePrefix string) (lb.Balancer, bool) {
 	return balancer, ok
 }
 
+// RPC is a func to dial the server to do the method
 func RPC(servicePrefix string, req interface{}) (interface{}, error) {
 	if lb, ok := GetGrpcBalancer(servicePrefix); ok {
 		reqEp, err := lb.Endpoint()
