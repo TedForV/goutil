@@ -28,7 +28,6 @@ func Load(configPath string, configFileType int, config interface{}) error {
 	case CONFIG_YAML:
 		return loadYaml(configPath, config)
 	default:
-		config = nil
 		return fmt.Errorf("path:%s,type:%d, config can't be found.", configPath, configFileType)
 	}
 }
