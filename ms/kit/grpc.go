@@ -4,7 +4,6 @@ import (
 	"github.com/go-kit/kit/sd/etcdv3"
 
 	"context"
-	"errors"
 	"fmt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd"
@@ -47,13 +46,13 @@ func GetGrpcBalancer(servicePrefix string) (lb.Balancer, bool) {
 
 // RPC is a func to dial the server to do the method
 func RPC(servicePrefix string, req interface{}) (interface{}, error) {
-	if lb, ok := GetGrpcBalancer(servicePrefix); ok {
-		reqEp, err := lb.Endpoint()
+	if lber, ok := GetGrpcBalancer(servicePrefix); ok {
+		reqEp, err := lber.Endpoint()
 		if err != nil {
 			return nil, err
 		}
 		return reqEp(context.Background(), req)
 	} else {
-		return nil, errors.New(fmt.Sprintf("No such service: %s", servicePrefix))
+		return nil, fmt.Errorf("No such service: %s", servicePrefix)
 	}
 }

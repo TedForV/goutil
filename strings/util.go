@@ -15,7 +15,7 @@ func Reverse(s string) string {
 	return string(reverse(r))
 }
 
-// define mobile regex
+// MOBILE_REGEX  define mobile regex
 const MOBILE_REGEX = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9])|(17[0-9]))\\d{8}$"
 
 // IsValidMobile returns a string is a phone No. or not

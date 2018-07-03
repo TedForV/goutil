@@ -7,7 +7,7 @@ const (
 	ROOT_RUNE rune = 9999
 )
 
-// The trie node model
+// TrieNode is  trie node model
 type TrieNode struct {
 	Children map[rune]*TrieNode
 	End      bool
