@@ -41,25 +41,25 @@ func (hook *ErrorLogServiceHook) Fire(entry *logrus.Entry) error {
 		initLogService(hook.EtcdConf, hook.LogServicePrefix, logFactory)
 	}
 
-	defer func() {
-		if err := recover(); err != nil {
-			//log local
-		}
-	}()
-
-	data, err := kit.RPC(hook.LogServicePrefix, &pb.ErrorLog{
+	log := pb.ErrorLog{
 		ServiceId:      int32(hook.ServiceId),
 		ServiceTypeId:  int32(hook.ServiceTypeId),
 		ProjectAddress: hook.Address,
 		Msg:            entry.Message,
-		Trace:          entry.Data[logrus_hooks.Error_Trace_Name].(string),
-		AdditionalInfo: entry.Data[logrus_hooks.Error_AddInfo_Name].(string),
-	})
+	}
+	if v, ok := entry.Data[logrus_hooks.Error_Trace_Name]; ok {
+		log.Trace = v.(string)
+	}
+	if v, ok := entry.Data[logrus_hooks.Error_AddInfo_Name]; ok {
+		log.AdditionalInfo = v.(string)
+	}
+
+	data, err := kit.RPC(hook.LogServicePrefix, &log)
 
 	if err != nil {
-		logrus.Debug(err)
+		logrus.Info(err)
 	}
-	logrus.Debug(data)
+	logrus.Info(data)
 
 	return nil
 }

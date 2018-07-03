@@ -26,6 +26,7 @@ func RegisterService(etcdConfig *ETCD3Config, servicePrefix string, instance str
 	register := etcdv3.NewRegistrar(etcdClient, etcdv3.Service{
 		Key:   servicePrefix + instance,
 		Value: instance,
+		TTL:   etcdv3.NewTTLOption(time.Second*1, time.Second*3),
 	}, kitlog.NewNopLogger())
 	register.Register()
 }

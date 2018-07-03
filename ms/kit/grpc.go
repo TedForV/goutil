@@ -55,7 +55,10 @@ func GetGrpcBalancer(servicePrefix string) (lb.Balancer, bool) {
 
 func RPC(servicePrefix string, req interface{}) (interface{}, error) {
 	if lb, ok := GetGrpcBalancer(servicePrefix); ok {
-		reqEp, _ := lb.Endpoint()
+		reqEp, err := lb.Endpoint()
+		if err != nil {
+			return nil, err
+		}
 		return reqEp(context.Background(), req)
 	} else {
 		return nil, errors.New(fmt.Sprintf("No such service: %s", servicePrefix))

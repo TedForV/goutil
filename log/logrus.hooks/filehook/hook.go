@@ -37,7 +37,6 @@ func (hook *FileHook) Fire(entry *logrus.Entry) error {
 	fileObj, err := os.OpenFile(logFilePath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
 		panic(err)
-		os.Exit(0)
 	}
 
 	defer fileObj.Close()
