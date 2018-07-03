@@ -1,6 +1,7 @@
-package logrus_hooks
+package logrushooks
 
+//define additional field in error information
 const (
-	Error_Trace_Name   = "Trace"
-	Error_AddInfo_Name = "AdditionalInfo"
+	ERROR_TRACE_NAME   = "Trace"
+	ERROR_ADDINFO_NAME = "AdditionalInfo"
 )

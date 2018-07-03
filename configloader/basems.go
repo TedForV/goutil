@@ -1,10 +1,12 @@
 package configloader
 
+//define the env model type
 const (
 	EnvDev = "dev"
 	EnvPro = "pro"
 )
 
+//define a common used configuration model,
 type BaseMSConfig struct {
 	IP                 string      `yaml:"ip"`
 	Port               int         `yaml:"port"`
@@ -14,6 +16,7 @@ type BaseMSConfig struct {
 	LocalLogFolderPath string      `yaml:"localLogFolderPath"`
 }
 
+//define service model
 type ServiceInfo struct {
 	ServiceId     int    `yaml:"serviceId"`
 	ServiceTypeId int    `yaml:"serviceTypeId"`

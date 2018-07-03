@@ -6,7 +6,6 @@ import (
 	"github.com/TedForV/goutil/ms/kit"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"log"
 	"rpc_log/pb"
 	"testing"
 	"time"
@@ -20,7 +19,7 @@ func TestNewErrorLogServiceHook(t *testing.T) {
 	}, "/service/log")
 	logrus.AddHook(hook)
 
-	logrus.WithField(logrus_hooks.Error_Trace_Name, "Trace details...").Error("ms error log test")
+	logrus.WithField(logrushooks.ERROR_TRACE_NAME, "Trace details...").Error("ms error log test")
 }
 
 func TestClient(t *testing.T) {
@@ -33,7 +32,7 @@ func TestClient(t *testing.T) {
 	defer conn.Close()
 
 	client := pb.NewLoggerClient(conn)
-	result, err := client.AddErrorLog(context.Background(), &pb.ErrorLog{
+	_, err = client.AddErrorLog(context.Background(), &pb.ErrorLog{
 		ServiceId:      1,
 		ServiceTypeId:  1,
 		ProjectAddress: "grpcTest",
@@ -44,5 +43,5 @@ func TestClient(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	log.Print("Result:%+v", result)
+	//log.Print("Result:%+v", result)
 }
