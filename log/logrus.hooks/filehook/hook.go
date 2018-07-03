@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// FileHook is a hook for writing log in local file
 type FileHook struct {
 	LogFolderPath string
 }
@@ -18,6 +19,7 @@ var (
 	debugLogPath string
 )
 
+// NewFileHook is an new method for new a file hook
 func NewFileHook(logFolderPath string) *FileHook {
 	logFolderPath = strings.Trim(logFolderPath, " ")
 	if logFolderPath == "" {
@@ -28,10 +30,12 @@ func NewFileHook(logFolderPath string) *FileHook {
 	}
 }
 
+// Levels is the method must defined in hook
 func (hook *FileHook) Levels() []logrus.Level {
 	return logrus.AllLevels
 }
 
+// Fire is the method must defined in hook
 func (hook *FileHook) Fire(entry *logrus.Entry) error {
 	logFilePath := hook.GetLogFilePath(entry.Level)
 	fileObj, err := os.OpenFile(logFilePath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
@@ -50,6 +54,7 @@ func (hook *FileHook) Fire(entry *logrus.Entry) error {
 	return nil
 }
 
+// GetLogFilePath is a func to get log file path
 func (hook *FileHook) GetLogFilePath(level logrus.Level) string {
 	if logFileDay == 0 || logFileDay != time.Now().Day() { //first time to get path
 		defer func() {

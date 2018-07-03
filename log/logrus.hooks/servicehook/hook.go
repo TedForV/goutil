@@ -12,6 +12,7 @@ import (
 	"rpc_log/pb"
 )
 
+// ErrorLogServiceHook is a hook for sending error log to log service
 type ErrorLogServiceHook struct {
 	ServiceId        int
 	ServiceTypeId    int
@@ -20,6 +21,7 @@ type ErrorLogServiceHook struct {
 	LogServicePrefix string
 }
 
+// NewErrorLogServiceHook is new method for new ErrorLogServiceHook
 func NewErrorLogServiceHook(serviceId int, serviceTypeId int, address string, etcdConfig *kit.ETCD3Config, logServicePrefix string) *ErrorLogServiceHook {
 	return &ErrorLogServiceHook{
 		ServiceId:        serviceId,
@@ -32,10 +34,12 @@ func NewErrorLogServiceHook(serviceId int, serviceTypeId int, address string, et
 
 var triggerLevels = []logrus.Level{logrus.ErrorLevel, logrus.FatalLevel, logrus.PanicLevel}
 
+// Levels is the method must defined in hook
 func (hook *ErrorLogServiceHook) Levels() []logrus.Level {
 	return triggerLevels
 }
 
+// Fire is the method must defined in hook
 func (hook *ErrorLogServiceHook) Fire(entry *logrus.Entry) error {
 	if _, ok := kit.GetGrpcBalancer(hook.LogServicePrefix); !ok {
 		initLogService(hook.EtcdConf, hook.LogServicePrefix, logFactory)
@@ -47,10 +51,10 @@ func (hook *ErrorLogServiceHook) Fire(entry *logrus.Entry) error {
 		ProjectAddress: hook.Address,
 		Msg:            entry.Message,
 	}
-	if v, ok := entry.Data[logrus_hooks.Error_Trace_Name]; ok {
+	if v, ok := entry.Data[logrushooks.ERROR_TRACE_NAME]; ok {
 		log.Trace = v.(string)
 	}
-	if v, ok := entry.Data[logrus_hooks.Error_AddInfo_Name]; ok {
+	if v, ok := entry.Data[logrushooks.ERROR_ADDINFO_NAME]; ok {
 		log.AdditionalInfo = v.(string)
 	}
 

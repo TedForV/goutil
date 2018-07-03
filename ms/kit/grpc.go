@@ -17,17 +17,8 @@ func init() {
 	lbs = make(map[string]lb.Balancer)
 }
 
+// InitialKitGrpc initial a grpc method in client side for using later
 func InitialKitGrpc(etcdConfig *ETCD3Config, servicePrefix string, f sd.Factory) {
-	//etcdClient, err := etcdv3.NewClient(context.Background(),
-	//	[]string{
-	//		etcdConfig.Server},
-	//	etcdv3.ClientOptions{
-	//		DialTimeout:   etcdConfig.DialTimeout,
-	//		DialKeepAlive: etcdConfig.DialKeepAlive,
-	//	})
-	//if err != nil {
-	//	panic(err)
-	//}
 	etcdClient, err := NewClient(etcdConfig)
 
 	if err != nil {
@@ -48,6 +39,7 @@ func InitialKitGrpc(etcdConfig *ETCD3Config, servicePrefix string, f sd.Factory)
 
 }
 
+// GetGrpcBalancer get fitted balancer for use
 func GetGrpcBalancer(servicePrefix string) (lb.Balancer, bool) {
 	balancer, ok := lbs[servicePrefix]
 	return balancer, ok
