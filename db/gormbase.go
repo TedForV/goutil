@@ -4,8 +4,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// DBType is new type for db type, from string
 type DBType string
 
+// define the all db types
 const (
 	DBTypeMysql    DBType = "mysql"
 	DBTypePostgres DBType = "Postgres"
@@ -13,6 +15,7 @@ const (
 	DBTypeMssql    DBType = "mssql"
 )
 
+// BaseGorm is a struct store base info for gorm
 type BaseGorm struct {
 	//DB *gorm.DB
 	//MaxIdleConn    int
@@ -22,6 +25,7 @@ type BaseGorm struct {
 	DBType  DBType
 }
 
+// NewBaseGorm is a func for new base gorm
 func NewBaseGorm(connStr string, dbType DBType) *BaseGorm {
 
 	//db.DB().SetMaxIdleConns(maxIdleConn)
@@ -37,6 +41,7 @@ func NewBaseGorm(connStr string, dbType DBType) *BaseGorm {
 	}
 }
 
+// NewConn is a func for new conn for connect db
 func (bg *BaseGorm) NewConn() (*gorm.DB, error) {
 	db, err := gorm.Open(string(bg.DBType), bg.ConnStr)
 	if err != nil {
