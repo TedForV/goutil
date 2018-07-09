@@ -90,30 +90,55 @@ func (t *Trie) IsExisted(content string) (bool, string) {
 //}
 
 func (tn *TrieNode) isMatched(words []rune) (bool, []rune) {
-	if tn.End {
-		return true, []rune{tn.Value}
-	}
-	if _, existed := tn.Children[words[0]]; existed {
-		if len(words) == 1 {
-			if tn.Value == ROOT_RUNE {
-				return true, words
-			} else {
-				return false, nil
-			}
-		}
-
-		result, keys := tn.Children[words[0]].isMatched(words[1:])
-		if result {
-			if tn.Value == ROOT_RUNE {
-				return result, keys
-			} else {
-				return result, append(keys, tn.Value)
-			}
-
+	if child, ok := tn.Children[words[0]]; ok {
+		if child.End {
+			return true, []rune{words[0]}
 		} else {
-			return false, nil
+			if len(words) == 1 {
+				return false, nil
+			} else {
+				result, keys := child.isMatched(words[1:])
+				if result {
+					return true, append(keys, words[0])
+				} else {
+					return false, nil
+				}
+			}
 		}
 	} else {
 		return false, nil
 	}
+
+	//if  tn.End {
+	//	return true, []rune{tn.Value}
+	//}
+	//if _, existed := tn.Children[words[0]]; existed {
+	//	if len(words) == 1 {
+	//		if tn.Children[words[0]].End == true {
+	//			return true, words[]
+	//		} else {
+	//			return false, nil
+	//		}
+	//	}
+	//
+	//	result, keys := tn.Children[words[0]].isMatched(words[1:])
+	//	if result {
+	//		return result, append(keys, words[0])
+	//
+	//	} else {
+	//		return false, nil
+	//	}
+	//	//if result {
+	//	//	if tn.End == true {
+	//	//		return result, keys
+	//	//	} else {
+	//	//		return result, append(keys, tn.Value)
+	//	//	}
+	//	//
+	//	//} else {
+	//	//	return false, nil
+	//	//}
+	//} else {
+	//	return false, nil
+	//}
 }
