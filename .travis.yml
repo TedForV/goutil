@@ -3,3 +3,9 @@ go:
   - "1.10.x"
 script:
   - go test ./strings
+notifications:
+  email:
+    recipients:
+      - tedforv@outlook.com
+    on_success: change
+    on_failure: always
