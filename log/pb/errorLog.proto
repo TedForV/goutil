@@ -1,0 +1,21 @@
+syntax = "proto3";
+package pb;
+
+service Logger{
+    rpc AddErrorLog(ErrorLog) returns(AddErrorLogResponse){};
+}
+
+message ErrorLog{
+    int32 ServiceId = 1;
+    int32 ServiceTypeId = 2;
+    string ProjectAddress = 3;
+    string Msg = 4;
+    string Trace = 5;
+    string AdditionalInfo = 6;
+}
+
+message AddErrorLogResponse{
+    bool result = 1;
+    string error = 2;
+
+}

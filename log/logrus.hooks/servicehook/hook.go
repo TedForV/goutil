@@ -3,13 +3,13 @@ package servicehook
 import (
 	"context"
 	"github.com/TedForV/goutil/log/logrus.hooks"
+	"github.com/TedForV/goutil/log/pb"
 	"github.com/TedForV/goutil/ms/kit"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/sd"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"io"
-	"rpc_log/pb"
 )
 
 // ErrorLogServiceHook is a hook for sending error log to log service
