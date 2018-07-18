@@ -3,10 +3,10 @@ package servicehook
 import (
 	"context"
 	"github.com/TedForV/goutil/log/logrus.hooks"
+	"github.com/TedForV/goutil/log/pb"
 	"github.com/TedForV/goutil/ms/kit"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"rpc_log/pb"
 	"testing"
 	"time"
 )
