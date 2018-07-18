@@ -8,4 +8,4 @@ script:
   - go get github.com/go-kit/kit
   - go get google.golang.org/grpc
   - go get github.com/satori/go.uuid
-  - go test ./
+  - go test ./strings
