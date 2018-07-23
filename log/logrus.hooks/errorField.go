@@ -1,6 +1,9 @@
 package logrushooks
 
-import "github.com/sirupsen/logrus"
+import (
+	"fmt"
+	"github.com/sirupsen/logrus"
+)
 
 //define additional field in error information
 const (
@@ -10,6 +13,6 @@ const (
 
 func Recover(params interface{}) {
 	if err := recover(); err != nil {
-		logrus.WithField(ERROR_ADDINFO_NAME, params).WithField(ERROR_TRACE_NAME, err).Error(err)
+		logrus.WithField(ERROR_ADDINFO_NAME, params).WithField(ERROR_TRACE_NAME, fmt.Sprintf("%+v", err)).Error(err)
 	}
 }

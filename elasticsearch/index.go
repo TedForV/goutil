@@ -9,15 +9,18 @@ import (
 )
 
 var esConfig ESConfig
+var isInitaled bool
 
-func InitialESConfig(serverUrls []string) {
-	esConfig = ESConfig{
-		ServerUrls: serverUrls,
+func InitialESConfig(serverUrls []string, forceReload bool) {
+	if !isInitaled || forceReload {
+		esConfig = ESConfig{
+			ServerUrls: serverUrls,
+		}
 	}
 }
 
 func NewIndexWithMapping(indexName string, typeName string, mapping string) (bool, error) {
-	client, err := GetESClient()
+	client, err := GetSLClient()
 	if err != nil {
 		return false, errors.Wrap(err, "create client failed")
 	}
@@ -43,10 +46,7 @@ func NewIndexWithMapping(indexName string, typeName string, mapping string) (boo
 func IsIndexExisted(client *elastic.Client, indexName string) (bool, error) {
 	var err error
 	if client == nil {
-		client, err = GetESClient()
-		if err != nil {
-			return false, err
-		}
+		return false, errors.New("client is nil.")
 	}
 	ok, err := client.IndexExists(indexName).Do(context.Background())
 	if err != nil {
@@ -65,10 +65,7 @@ func UpdateMapping(client *elastic.Client, indexName string, typeName string, ma
 	}
 	var err error
 	if client == nil {
-		client, err = GetESClient()
-		if err != nil {
-			return false, err
-		}
+		return false, errors.New("client is nil.")
 	}
 
 	result, err := client.PutMapping().Index(indexName).Type(typeName).BodyString(mapping).Do(context.Background())
@@ -81,13 +78,25 @@ func UpdateMapping(client *elastic.Client, indexName string, typeName string, ma
 	return true, nil
 }
 
-func InsertData(client elastic.Client, indexName string, typeName string, item interface{}, id string) (bool, int, error) {
-	//result, err := client.Index().Index("news").Type(typeName).Id(id).BodyJson(item).Do(context.TODO())
-
+func InsertData(client elastic.Client, indexName string, typeName string, item interface{}, id string) (bool, string, error) {
+	result, err := client.Index().Index(indexName).Type(typeName).Id(id).BodyJson(item).Do(context.TODO())
+	if err != nil {
+		return false, "-1", errors.Wrap(err, "Insert failed.")
+	}
+	if result == nil {
+		return false, "-1", errors.New("Insert failed.")
+	}
+	return true, result.Id, nil
 }
 
-func GetESClient() (*elastic.Client, error) {
+// GetLLClient returns a long-lived client
+func GetLLClient() (*elastic.Client, error) {
 	return elastic.NewClient(elastic.SetURL(esConfig.ServerUrls...))
+}
+
+// GetSLClient return a short-lived client
+func GetSLClient() (*elastic.Client, error) {
+	return elastic.NewSimpleClient(elastic.SetURL(esConfig.ServerUrls...))
 }
 
 type ESConfig struct {
