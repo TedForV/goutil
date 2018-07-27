@@ -12,7 +12,7 @@ type BaseMSConfig struct {
 	Port               int         `yaml:"port"`
 	Env                string      `yaml:"env"`
 	ServiceInfo        ServiceInfo `yaml:"serviceInfo"`
-	EtcdServer         string      `yaml:"etcdServer"`
+	EtcdServers        []string    `yaml:"etcdServers"`
 	LocalLogFolderPath string      `yaml:"localLogFolderPath"`
 }
 

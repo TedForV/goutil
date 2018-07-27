@@ -24,15 +24,23 @@ func TestNewIndexWithMapping(t *testing.T) {
 				"p_a":{
 					"type":"text",
 					"analyzer":"ik_max_word",
-					"search_analyzer":"ik_max_word"
+					"search_analyzer":"ik_max_word",
+					"copy_to":"full_text"
 				},
 				"p_b":{
 					"type":"text",
 					"analyzer":"ik_max_word",
-					"search_analyzer":"ik_max_word"
+					"search_analyzer":"ik_max_word",
+					"copy_to":"full_text"
 				},
 				"p_c":{
 					"type":"text",
+					"analyzer":"ik_max_word",
+					"search_analyzer":"ik_max_word",
+					"copy_to":"full_text"
+				},
+				"full_text":{
+					"type":"text"
 					"analyzer":"ik_max_word",
 					"search_analyzer":"ik_max_word"
 				}
@@ -116,7 +124,7 @@ func TestInsertData(t *testing.T) {
 		t.Errorf("%+v", err)
 	}
 	for _, v := range datas {
-		ok, id, err := InsertData(*client, "news", "new", &v, string(v.Id))
+		ok, id, err := InsertData(client, "news", "new", &v, string(v.Id))
 		if err != nil {
 			t.Errorf("%+v", err)
 		}
@@ -133,7 +141,7 @@ func TestSelectById(t *testing.T) {
 	if err != nil {
 		t.Errorf("%+v", err)
 	}
-	getResult, err := client.Get().Index("news").Type("new").Id("1").Do(context.TODO())
+	getResult, err := client.Get().Index("news").Type("article").Id("1").Do(context.TODO())
 	if err != nil {
 		t.Errorf("%+v", err)
 	}

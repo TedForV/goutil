@@ -7,7 +7,7 @@ import (
 )
 
 var etcdConfig = &ETCD3Config{
-	Server:        "10.10.10.11:2379",
+	Servers:       []string{"10.10.10.11:2379"},
 	DialKeepAlive: time.Second * 3,
 	DialTimeout:   time.Second * 3,
 }

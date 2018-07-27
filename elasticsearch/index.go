@@ -78,7 +78,7 @@ func UpdateMapping(client *elastic.Client, indexName string, typeName string, ma
 	return true, nil
 }
 
-func InsertData(client elastic.Client, indexName string, typeName string, item interface{}, id string) (bool, string, error) {
+func InsertData(client *elastic.Client, indexName string, typeName string, item interface{}, id string) (bool, string, error) {
 	result, err := client.Index().Index(indexName).Type(typeName).Id(id).BodyJson(item).Do(context.TODO())
 	if err != nil {
 		return false, "-1", errors.Wrap(err, "Insert failed.")
@@ -87,6 +87,17 @@ func InsertData(client elastic.Client, indexName string, typeName string, item i
 		return false, "-1", errors.New("Insert failed.")
 	}
 	return true, result.Id, nil
+}
+
+func DeleteIndex(client *elastic.Client, indexNames []string) (bool, error) {
+	result, err := elastic.NewIndicesDeleteService(client).Index(indexNames).Do(context.TODO())
+	return result.Acknowledged, errors.Wrap(err, fmt.Sprintf("Delete index(%+v) failed.", indexNames))
+}
+
+func CommonSearch(client *elastic.Client, indexName string, key string, propertyName string, pageNo int, pageRow int) ([]*elastic.SearchHit, error) {
+	q := elastic.NewCommonTermsQuery(propertyName, key)
+	searchResult, err := client.Search().Index(indexName).Query(q).Sort("publish_time", false).From((pageNo - 1) * pageRow).Size(pageRow).Do(context.TODO())
+	return searchResult.Hits.Hits, err
 }
 
 // GetLLClient returns a long-lived client
