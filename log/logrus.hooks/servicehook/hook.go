@@ -58,12 +58,13 @@ func (hook *ErrorLogServiceHook) Fire(entry *logrus.Entry) error {
 		log.AdditionalInfo = v.(string)
 	}
 
-	data, err := kit.RPC(hook.LogServicePrefix, &log)
+	kit.RPC(hook.LogServicePrefix, &log)
 
-	if err != nil {
-		logrus.Info(err)
-	}
-	logrus.Info(data)
+	// dead lock
+	//if err != nil {
+	//	logrus.Info(err)
+	//}
+	//logrus.Info(data)
 
 	return nil
 }

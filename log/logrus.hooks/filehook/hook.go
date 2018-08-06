@@ -47,9 +47,10 @@ func (hook *FileHook) Fire(entry *logrus.Entry) error {
 
 	info, err := entry.String()
 	if err != nil {
-		fileObj.WriteString(err.Error() + "\r\n")
+		fileObj.WriteString(err.Error() + "\n")
+		fileObj.WriteString(fmt.Sprintf("trace:%+v", err) + "\n")
 	} else {
-		fileObj.WriteString(info + "\r\n")
+		fileObj.WriteString(info + "\n")
 	}
 	return nil
 }

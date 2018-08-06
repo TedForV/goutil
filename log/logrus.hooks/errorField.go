@@ -18,5 +18,5 @@ func Recover(params interface{}) {
 }
 
 func RecordLog(params interface{}, err error) {
-	logrus.WithField(ERROR_ADDINFO_NAME, params).WithField(ERROR_TRACE_NAME, fmt.Sprintf("%+v", err)).Error(err)
+	logrus.WithField(ERROR_ADDINFO_NAME, fmt.Sprintf("%+v", params)).WithField(ERROR_TRACE_NAME, fmt.Sprintf("%+v", err)).Error(err)
 }
