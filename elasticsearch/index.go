@@ -89,6 +89,15 @@ func InsertData(client *elastic.Client, indexName string, typeName string, item 
 	return true, result.Id, nil
 }
 
+func DeleteData(client *elastic.Client, indexName string, typeName string, id string) (bool, error) {
+	_, err := elastic.NewDeleteService(client).Index(indexName).Type(typeName).Id(id).Do(context.TODO())
+	if err != nil {
+		return false, err
+	} else {
+		return true, nil
+	}
+}
+
 func DeleteIndex(client *elastic.Client, indexNames []string) (bool, error) {
 	result, err := elastic.NewIndicesDeleteService(client).Index(indexNames).Do(context.TODO())
 	return result.Acknowledged, errors.Wrap(err, fmt.Sprintf("Delete index(%+v) failed.", indexNames))

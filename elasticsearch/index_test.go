@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-var esServer = []string{"http://127.0.0.1:9200"}
+var esServer = []string{"http://10.10.11.200:9200"}
 
 func TestNewIndexWithMapping(t *testing.T) {
 	//esServer := []string{"http://127.0.0.1:9200"}
@@ -141,11 +141,24 @@ func TestSelectById(t *testing.T) {
 	if err != nil {
 		t.Errorf("%+v", err)
 	}
-	getResult, err := client.Get().Index("news").Type("article").Id("1").Do(context.TODO())
+	getResult, err := client.Get().Index("news").Type("article").Id("100374").Do(context.TODO())
 	if err != nil {
 		t.Errorf("%+v", err)
 	}
 	t.Logf("%+v", getResult)
+}
+
+func TestCatIndex(t *testing.T) {
+	InitialESConfig(esServer, true)
+	client, err := GetSLClient()
+	if err != nil {
+		t.Errorf("%+v", err)
+	}
+	getResult, err := elastic.NewCatIndicesService(client).Do(context.TODO())
+	datas := []elastic.CatIndicesResponseRow(getResult)
+	for _, v := range datas {
+		t.Log(v.Index)
+	}
 }
 
 func TestCommonSearch(t *testing.T) {
