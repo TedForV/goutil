@@ -2,18 +2,19 @@ package servicehook
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/TedForV/goutil/log/logrus.hooks"
 	"github.com/TedForV/goutil/log/pb"
 	"github.com/TedForV/goutil/ms/kit"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"testing"
-	"time"
 )
 
 func TestNewErrorLogServiceHook(t *testing.T) {
 	hook := NewErrorLogServiceHook(100, 100, "gRPC", &kit.ETCD3Config{
-		Server:        "10.10.10.11:2379",
+		Servers:       []string{"10.10.10.11:2379"},
 		DialKeepAlive: time.Second * 3,
 		DialTimeout:   time.Second * 3,
 	}, "/service/log")
