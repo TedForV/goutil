@@ -144,3 +144,49 @@ type model struct {
 	Age    int32  `json:"age"`
 	Remark string `json:"remark"`
 }
+
+func TestGetSortedSetCount(t *testing.T) {
+	conn, err := newConn()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	key := "sortedsettest:1"
+	type args struct {
+		conn *redis2.Conn
+		key  string
+		max  int
+		min  int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "1",
+			args: args{
+				conn: &conn,
+				key:  key,
+				max:  0,
+				min:  0,
+			},
+			want:    98,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetSortedSetCount(tt.args.conn, tt.args.key, tt.args.max, tt.args.min)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetSortedSetCount() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("GetSortedSetCount() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

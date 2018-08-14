@@ -17,6 +17,18 @@ const (
 	ZRANGE = "ZRANGEBYSCORE"
 	// ZREVRANGE command
 	ZREVRANGE = "ZREVRANGEBYSCORE"
+	// ZCOUNT command
+	ZCOUNT = "ZCOUNT"
+	// SETEX command
+	SETEX = "SETEX"
+	// ZADD command
+	ZADD = "ZADD"
+	// LIMIT command
+	LIMIT = "LIMIT"
+	// ZREM command
+	ZREM = "ZREM"
+	// GET command
+	GET = "GET"
 	// MaxInfinite is +inf
 	MaxInfinite = "+inf"
 	// MinInfinite is -inf
@@ -47,7 +59,7 @@ func SetString(conn *redis2.Conn, key string, data interface{}, expiredSeconds i
 	if err != nil {
 		return errors.Wrap(err, "SetString failed.")
 	}
-	_, err = (*conn).Do("SETEX", key, expiredSeconds, value)
+	_, err = (*conn).Do(SETEX, key, expiredSeconds, value)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("SET failed. Key:%s Value:%s", key, value))
 	}
@@ -56,7 +68,7 @@ func SetString(conn *redis2.Conn, key string, data interface{}, expiredSeconds i
 
 // GetString get a value from a string key
 func GetString(conn *redis2.Conn, key string, data interface{}) error {
-	value, err := redis2.String((*conn).Do("GET", key))
+	value, err := redis2.String((*conn).Do(GET, key))
 	if err != nil {
 		return errors.Wrap(err, "GetString failed.")
 	}
@@ -78,7 +90,7 @@ func AddSortedSet(conn *redis2.Conn, key string, data interface{}, score int64) 
 			return errors.Wrap(err, fmt.Sprintf("%+v", data))
 		}
 	}
-	_, err = (*conn).Do("ZADD", key, score, value)
+	_, err = (*conn).Do(ZADD, key, score, value)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("ZADD failed. Key:%s Value:%s Score:%d", key, value, score))
 	}
@@ -88,12 +100,7 @@ func AddSortedSet(conn *redis2.Conn, key string, data interface{}, score int64) 
 // GetSortSet get a range data from sorted set key
 // if you need sort all items without range, set max = min = 0
 func GetSortSet(conn *redis2.Conn, key string, pageNo int, pageRow int, max, min int, isDESC bool) ([]string, error) {
-	var maxStr, minStr string
-	if max == min && max == 0 {
-		maxStr, minStr = MaxInfinite, MinInfinite
-	} else {
-		maxStr, minStr = strconv.Itoa(max), strconv.Itoa(min)
-	}
+	maxStr, minStr := getRange(max, min)
 
 	var command string
 	if isDESC {
@@ -101,11 +108,18 @@ func GetSortSet(conn *redis2.Conn, key string, pageNo int, pageRow int, max, min
 	} else {
 		command = ZRANGE
 	}
-	value, err := redis2.Strings((*conn).Do(command, key, maxStr, minStr, "LIMIT", 0, 10))
+	value, err := redis2.Strings((*conn).Do(command, key, maxStr, minStr, LIMIT, 0, 10))
 	if err != nil {
 		return value, errors.Wrap(err, fmt.Sprintf("GetSortSet failed. Key: %s pageNo: %d pageRow: %d isDESC: %t", key, pageNo, pageRow, isDESC))
 	}
 	return value, nil
+}
+
+// GetSortedSetCount get sorted set count in range
+// if no range limited, set max = min = 0
+func GetSortedSetCount(conn *redis2.Conn, key string, max, min int) (int, error) {
+	maxStr, minStr := getRange(max, min)
+	return redis2.Int((*conn).Do(ZCOUNT, key, minStr, maxStr))
 }
 
 // DeleteSortSetItem delete the item from a sorted set
@@ -123,6 +137,15 @@ func DeleteSortSetItem(conn *redis2.Conn, key string, data interface{}) error {
 			return errors.Wrap(err, fmt.Sprintf("%+v", data))
 		}
 	}
-	_, err = (*conn).Do("ZREM", key, value)
+	_, err = (*conn).Do(ZREM, key, value)
 	return err
+}
+
+func getRange(max, min int) (string, string) {
+	if max == min && max == 0 {
+		return MaxInfinite, MinInfinite
+	}
+
+	return strconv.Itoa(max), strconv.Itoa(min)
+
 }
