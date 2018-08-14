@@ -13,10 +13,14 @@ import (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const (
-	// OrderByASC const string for asc order
-	OrderByASC = "ASC"
-	// OrderByDESC const string for desc order
-	OrderByDESC = "DESC"
+	// ZRANGE command
+	ZRANGE = "ZRANGEBYSCORE"
+	// ZREVRANGE command
+	ZREVRANGE = "ZREVRANGEBYSCORE"
+	// MaxInfinite is +inf
+	MaxInfinite = "+inf"
+	// MinInfinite is -inf
+	MinInfinite = "-inf"
 )
 
 // CreateRedisConn create a connection to redis
@@ -82,23 +86,26 @@ func AddSortedSet(conn *redis2.Conn, key string, data interface{}, score int64) 
 }
 
 // GetSortSet get a range data from sorted set key
-func GetSortSet(conn *redis2.Conn, key string, pageNo int, pageRow int, isDESC bool) ([]string, error) {
-	var order string
-	if isDESC {
-		order = OrderByDESC
+// if you need sort all items without range, set max = min = 0
+func GetSortSet(conn *redis2.Conn, key string, pageNo int, pageRow int, max, min int, isDESC bool) ([]string, error) {
+	var maxStr, minStr string
+	if max == min && max == 0 {
+		maxStr, minStr = MaxInfinite, MinInfinite
 	} else {
-		order = OrderByASC
+		maxStr, minStr = strconv.Itoa(max), strconv.Itoa(min)
 	}
-	value, err := redis2.Strings((*conn).Do("SORT", key, "LIMIT", 0, 10, order))
-	_ = order
-	//value, err := redis2.Strings((*conn).Do("SORT", key, fmt.Sprintf(" LIMIT %d %d ", pageRow*(pageNo-1), pageRow), order))
-	//fmt.Printf(" LIMIT %d %d ", pageRow*(pageNo-1), pageRow)
-	//value, err := redis2.Strings((*conn).Do("SORT", key, order))
+
+	var command string
+	if isDESC {
+		command = ZREVRANGE
+	} else {
+		command = ZRANGE
+	}
+	value, err := redis2.Strings((*conn).Do(command, key, maxStr, minStr, "LIMIT", 0, 10))
 	if err != nil {
 		return value, errors.Wrap(err, fmt.Sprintf("GetSortSet failed. Key: %s pageNo: %d pageRow: %d isDESC: %t", key, pageNo, pageRow, isDESC))
 	}
 	return value, nil
-
 }
 
 // DeleteSortSetItem delete the item from a sorted set

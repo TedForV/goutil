@@ -1,10 +1,12 @@
 package redis
 
 import (
+	"reflect"
 	"testing"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
+	redis2 "github.com/gomodule/redigo/redis"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -50,20 +52,71 @@ func TestAddSortedSet(t *testing.T) {
 	}
 }
 
+// func TestGetSortSet(t *testing.T) {
+// 	conn, err := newConn()
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	key := "sortedsettest:1"
+// 	data, err := GetSortSet(&conn, key, 1, 10, true)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	for i, v := range data {
+// 		t.Logf("%d %s", i, v)
+// 	}
+// }
+
 func TestGetSortSet(t *testing.T) {
 	conn, err := newConn()
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	key := "sortedsettest:1"
-	data, err := GetSortSet(&conn, key, 1, 10, true)
-	if err != nil {
-		t.Error(err)
-		return
+	type args struct {
+		conn    *redis2.Conn
+		key     string
+		pageNo  int
+		pageRow int
+		max     int
+		min     int
+		isDESC  bool
 	}
-	for i, v := range data {
-		t.Logf("%d %s", i, v)
+	tests := []struct {
+		name    string
+		args    args
+		want    []string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "1",
+			args: args{
+				conn:    &conn,
+				key:     "sortedsettest:1",
+				pageNo:  1,
+				pageRow: 10,
+				max:     0,
+				min:     0,
+				isDESC:  true,
+			},
+			want:    nil,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetSortSet(tt.args.conn, tt.args.key, tt.args.pageNo, tt.args.pageRow, tt.args.max, tt.args.min, tt.args.isDESC)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetSortSet() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetSortSet() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 
