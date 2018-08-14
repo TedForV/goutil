@@ -29,6 +29,8 @@ const (
 	ZREM = "ZREM"
 	// GET command
 	GET = "GET"
+	// MGET command
+	MGET = "MGET"
 	// MaxInfinite is +inf
 	MaxInfinite = "+inf"
 	// MinInfinite is -inf
@@ -75,6 +77,15 @@ func GetString(conn *redis2.Conn, key string, data interface{}) error {
 	return json.UnmarshalFromString(value, data)
 }
 
+// GetStrings get multi-values
+func GetStrings(conn *redis2.Conn, keys []string, data interface{}) ([]string, error) {
+	iKeys := make([]interface{}, len(keys))
+	for i, v := range keys {
+		iKeys[i] = v
+	}
+	return redis2.Strings((*conn).Do(MGET, iKeys...))
+}
+
 // AddSortedSet add a data into a sorted set
 func AddSortedSet(conn *redis2.Conn, key string, data interface{}, score int64) error {
 	var value string
@@ -108,7 +119,7 @@ func GetSortSet(conn *redis2.Conn, key string, pageNo int, pageRow int, max, min
 	} else {
 		command = ZRANGE
 	}
-	value, err := redis2.Strings((*conn).Do(command, key, maxStr, minStr, LIMIT, 0, 10))
+	value, err := redis2.Strings((*conn).Do(command, key, maxStr, minStr, LIMIT, (pageNo-1)*pageRow, pageRow))
 	if err != nil {
 		return value, errors.Wrap(err, fmt.Sprintf("GetSortSet failed. Key: %s pageNo: %d pageRow: %d isDESC: %t", key, pageNo, pageRow, isDESC))
 	}

@@ -2,6 +2,7 @@ package redis
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
@@ -187,6 +188,53 @@ func TestGetSortedSetCount(t *testing.T) {
 			if got != tt.want {
 				t.Errorf("GetSortedSetCount() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestGetStrings(t *testing.T) {
+	conn, err := newConn()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	key := "test:"
+	for i := 1; i < 10; i++ {
+		SetString(&conn, key+strconv.Itoa(i), i, 600)
+	}
+
+	type args struct {
+		conn *redis2.Conn
+		keys []string
+		data interface{}
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "1",
+			args: args{
+				conn: &conn,
+				keys: []string{"test:1", "test:3", "test:8"},
+				data: []string{},
+			},
+			want:    nil,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetStrings(tt.args.conn, tt.args.keys, tt.args.data)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetStrings() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			_ = got
+
 		})
 	}
 }
