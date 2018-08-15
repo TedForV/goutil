@@ -78,12 +78,17 @@ func GetString(conn *redis2.Conn, key string, data interface{}) error {
 }
 
 // GetStrings get multi-values
-func GetStrings(conn *redis2.Conn, keys []string, data interface{}) ([]string, error) {
+func GetStrings(conn *redis2.Conn, keys []string) (interface{}, error) {
 	iKeys := make([]interface{}, len(keys))
 	for i, v := range keys {
 		iKeys[i] = v
 	}
-	return redis2.Strings((*conn).Do(MGET, iKeys...))
+	value, err := redis2.Strings((*conn).Do(MGET, iKeys...))
+	if err != nil {
+		return nil, errors.Wrap(err, "GetStrings failed.")
+	}
+
+	return &value, nil
 }
 
 // AddSortedSet add a data into a sorted set
@@ -110,7 +115,7 @@ func AddSortedSet(conn *redis2.Conn, key string, data interface{}, score int64) 
 
 // GetSortSet get a range data from sorted set key
 // if you need sort all items without range, set max = min = 0
-func GetSortSet(conn *redis2.Conn, key string, pageNo int, pageRow int, max, min int, isDESC bool) ([]string, error) {
+func GetSortSet(conn *redis2.Conn, key string, pageNo int, pageRow int, max, min int64, isDESC bool) ([]string, error) {
 	maxStr, minStr := getRange(max, min)
 
 	var command string
@@ -128,7 +133,7 @@ func GetSortSet(conn *redis2.Conn, key string, pageNo int, pageRow int, max, min
 
 // GetSortedSetCount get sorted set count in range
 // if no range limited, set max = min = 0
-func GetSortedSetCount(conn *redis2.Conn, key string, max, min int) (int, error) {
+func GetSortedSetCount(conn *redis2.Conn, key string, max, min int64) (int, error) {
 	maxStr, minStr := getRange(max, min)
 	return redis2.Int((*conn).Do(ZCOUNT, key, minStr, maxStr))
 }
@@ -152,11 +157,11 @@ func DeleteSortSetItem(conn *redis2.Conn, key string, data interface{}) error {
 	return err
 }
 
-func getRange(max, min int) (string, string) {
+func getRange(max, min int64) (string, string) {
 	if max == min && max == 0 {
 		return MaxInfinite, MinInfinite
 	}
 
-	return strconv.Itoa(max), strconv.Itoa(min)
+	return strconv.FormatInt(max, 10), strconv.FormatInt(min, 10)
 
 }

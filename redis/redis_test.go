@@ -53,23 +53,6 @@ func TestAddSortedSet(t *testing.T) {
 	}
 }
 
-// func TestGetSortSet(t *testing.T) {
-// 	conn, err := newConn()
-// 	if err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
-// 	key := "sortedsettest:1"
-// 	data, err := GetSortSet(&conn, key, 1, 10, true)
-// 	if err != nil {
-// 		t.Error(err)
-// 		return
-// 	}
-// 	for i, v := range data {
-// 		t.Logf("%d %s", i, v)
-// 	}
-// }
-
 func TestGetSortSet(t *testing.T) {
 	conn, err := newConn()
 	if err != nil {
@@ -81,8 +64,8 @@ func TestGetSortSet(t *testing.T) {
 		key     string
 		pageNo  int
 		pageRow int
-		max     int
-		min     int
+		max     int64
+		min     int64
 		isDESC  bool
 	}
 	tests := []struct {
@@ -156,8 +139,8 @@ func TestGetSortedSetCount(t *testing.T) {
 	type args struct {
 		conn *redis2.Conn
 		key  string
-		max  int
-		min  int
+		max  int64
+		min  int64
 	}
 	tests := []struct {
 		name    string
@@ -228,13 +211,12 @@ func TestGetStrings(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetStrings(tt.args.conn, tt.args.keys, tt.args.data)
+			data, err := GetStrings(tt.args.conn, tt.args.keys)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetStrings() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			_ = got
-
+			_ = data
 		})
 	}
 }
