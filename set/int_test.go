@@ -29,3 +29,31 @@ func TestUnion(t *testing.T) {
 		})
 	}
 }
+
+func TestDiff(t *testing.T) {
+	type args struct {
+		base     []int32
+		compared []int32
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int32
+	}{
+		{
+			name: "diff 1",
+			args: args{
+				base:     []int32{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				compared: []int32{1, 7, 8, 9, 0, 10, 11},
+			},
+			want: []int32{0, 10, 11},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Diff(tt.args.base, tt.args.compared); len(got) != len(tt.want) {
+				t.Errorf("Diff() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
