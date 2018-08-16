@@ -1,16 +1,19 @@
 package kit
 
 import (
-	"github.com/go-kit/kit/sd/etcdv3"
-
 	"context"
 	"fmt"
+
+	"github.com/TedForV/goutil/log/logrus.hooks"
+	"github.com/go-kit/kit/sd/etcdv3"
+
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd"
 	"github.com/go-kit/kit/sd/lb"
 )
 
 var lbs map[string]lb.Balancer
+var etcdClient etcdv3.Client
 
 func init() {
 	lbs = make(map[string]lb.Balancer)
@@ -18,10 +21,14 @@ func init() {
 
 // InitialKitGrpc initial a grpc method in client side for using later
 func InitialKitGrpc(etcdConfig *ETCD3Config, servicePrefix string, f sd.Factory) {
-	etcdClient, err := NewClient(etcdConfig)
+	var err error
+	if etcdClient == nil {
+		etcdClient, err = NewClient(etcdConfig)
 
-	if err != nil {
-		panic(err)
+		if err != nil {
+			logrushooks.RecordLog(etcdConfig, err)
+			panic(err)
+		}
 	}
 
 	instancer, err := etcdv3.NewInstancer(etcdClient, servicePrefix, log.NewNopLogger())
