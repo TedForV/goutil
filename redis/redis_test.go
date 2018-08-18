@@ -14,7 +14,8 @@ import (
 var testPrefixKey = "test:"
 
 func TestCreateRedisConn(t *testing.T) {
-	conn, err := CreateRedisConn("192.168.10.128:6379", time.Second*3, time.Second*10, time.Second*20)
+	//conn, err := CreateRedisConn("192.168.10.128:6379", time.Second*3, time.Second*10, time.Second*20)
+	conn, err := CreateRedisConn("10.10.10.203:6379", time.Second*3, time.Second*10, time.Second*20)
 	if err != nil {
 		t.Error(err)
 	}
@@ -219,4 +220,51 @@ func TestGetStrings(t *testing.T) {
 			_ = data
 		})
 	}
+}
+
+func TestGetString(t *testing.T) {
+	conn, err := newConn()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	type args struct {
+		conn *redis2.Conn
+		key  string
+		data interface{}
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "1",
+			args: args{
+				conn: &conn,
+				key:  "briefnews:100466",
+				data: &RNewsBreifInfo{},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := GetString(tt.args.conn, tt.args.key, tt.args.data); (err != nil) != tt.wantErr {
+				t.Errorf("%+v", tt.args.data)
+				t.Errorf("GetString() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+type RNewsBreifInfo struct {
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Source      string `json:"source"`
+	BImagePath  string `json:"bImagePath"`
+	SImagePath  string `json:"sImagePath"`
+	VideoPath   string `json:"videoPath"`
+	TemplateID  int    `json:"templateId"`
+	PublishTime int64  `json:"publishTime"`
 }

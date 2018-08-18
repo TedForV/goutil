@@ -2,6 +2,8 @@ package servicehook
 
 import (
 	"context"
+	"io"
+
 	"github.com/TedForV/goutil/log/logrus.hooks"
 	"github.com/TedForV/goutil/log/pb"
 	"github.com/TedForV/goutil/ms/kit"
@@ -9,23 +11,26 @@ import (
 	"github.com/go-kit/kit/sd"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"io"
+)
+
+const (
+	addLogMethod = "add"
 )
 
 // ErrorLogServiceHook is a hook for sending error log to log service
 type ErrorLogServiceHook struct {
-	ServiceId        int
-	ServiceTypeId    int
+	ServiceID        int
+	ServiceTypeID    int
 	Address          string
 	EtcdConf         *kit.ETCD3Config
 	LogServicePrefix string
 }
 
 // NewErrorLogServiceHook is new method for new ErrorLogServiceHook
-func NewErrorLogServiceHook(serviceId int, serviceTypeId int, address string, etcdConfig *kit.ETCD3Config, logServicePrefix string) *ErrorLogServiceHook {
+func NewErrorLogServiceHook(ServiceID int, ServiceTypeID int, address string, etcdConfig *kit.ETCD3Config, logServicePrefix string) *ErrorLogServiceHook {
 	return &ErrorLogServiceHook{
-		ServiceId:        serviceId,
-		ServiceTypeId:    serviceTypeId,
+		ServiceID:        ServiceID,
+		ServiceTypeID:    ServiceTypeID,
 		Address:          address,
 		EtcdConf:         etcdConfig,
 		LogServicePrefix: logServicePrefix,
@@ -41,13 +46,13 @@ func (hook *ErrorLogServiceHook) Levels() []logrus.Level {
 
 // Fire is the method must defined in hook
 func (hook *ErrorLogServiceHook) Fire(entry *logrus.Entry) error {
-	if _, ok := kit.GetGrpcBalancer(hook.LogServicePrefix); !ok {
+	if _, ok := kit.GetGrpcBalancer(hook.LogServicePrefix, addLogMethod); !ok {
 		initLogService(hook.EtcdConf, hook.LogServicePrefix, logFactory)
 	}
 
 	log := pb.ErrorLog{
-		ServiceId:      int32(hook.ServiceId),
-		ServiceTypeId:  int32(hook.ServiceTypeId),
+		ServiceId:      int32(hook.ServiceID),
+		ServiceTypeId:  int32(hook.ServiceTypeID),
 		ProjectAddress: hook.Address,
 		Msg:            entry.Message,
 	}
@@ -58,7 +63,7 @@ func (hook *ErrorLogServiceHook) Fire(entry *logrus.Entry) error {
 		log.AdditionalInfo = v.(string)
 	}
 
-	kit.RPC(hook.LogServicePrefix, &log)
+	kit.RPC(hook.LogServicePrefix, addLogMethod, &log)
 
 	// dead lock
 	//if err != nil {
@@ -70,7 +75,7 @@ func (hook *ErrorLogServiceHook) Fire(entry *logrus.Entry) error {
 }
 
 func initLogService(etcdConfig *kit.ETCD3Config, logServicePrefix string, f sd.Factory) {
-	kit.InitialKitGrpc(etcdConfig, logServicePrefix, f)
+	kit.InitialKitGrpc(etcdConfig, logServicePrefix, addLogMethod, f)
 }
 
 func logFactory(instanceAddress string) (endpoint.Endpoint, io.Closer, error) {

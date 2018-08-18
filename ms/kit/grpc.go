@@ -20,7 +20,7 @@ func init() {
 }
 
 // InitialKitGrpc initial a grpc method in client side for using later
-func InitialKitGrpc(etcdConfig *ETCD3Config, servicePrefix string, f sd.Factory) {
+func InitialKitGrpc(etcdConfig *ETCD3Config, servicePrefix, methodName string, f sd.Factory) {
 	var err error
 	if etcdClient == nil {
 		etcdClient, err = NewClient(etcdConfig)
@@ -40,26 +40,32 @@ func InitialKitGrpc(etcdConfig *ETCD3Config, servicePrefix string, f sd.Factory)
 	endpointer := sd.NewEndpointer(instancer, f, log.NewNopLogger())
 
 	balancer := lb.NewRoundRobin(endpointer)
-
-	lbs[servicePrefix] = balancer
+	key := composeBalancerKey(servicePrefix, methodName)
+	lbs[key] = balancer
 
 }
 
 // GetGrpcBalancer get fitted balancer for use
-func GetGrpcBalancer(servicePrefix string) (lb.Balancer, bool) {
-	balancer, ok := lbs[servicePrefix]
+func GetGrpcBalancer(servicePrefix string, methodName string) (lb.Balancer, bool) {
+	key := composeBalancerKey(servicePrefix, methodName)
+	balancer, ok := lbs[key]
 	return balancer, ok
 }
 
 // RPC is a func to dial the server to do the method
-func RPC(servicePrefix string, req interface{}) (interface{}, error) {
-	if lber, ok := GetGrpcBalancer(servicePrefix); ok {
+func RPC(servicePrefix string, methodName string, req interface{}) (interface{}, error) {
+	if lber, ok := GetGrpcBalancer(servicePrefix, methodName); ok {
 		reqEp, err := lber.Endpoint()
 		if err != nil {
 			return nil, err
 		}
 		return reqEp(context.Background(), req)
-	} else {
-		return nil, fmt.Errorf("No such service: %s", servicePrefix)
 	}
+
+	return nil, fmt.Errorf("No such service: %s", servicePrefix)
+
+}
+
+func composeBalancerKey(servicePrefix, methodName string) string {
+	return fmt.Sprintf("%s:%s", servicePrefix, methodName)
 }

@@ -13,10 +13,10 @@ import (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const (
-	// ZRANGE command
-	ZRANGE = "ZRANGEBYSCORE"
-	// ZREVRANGE command
-	ZREVRANGE = "ZREVRANGEBYSCORE"
+	// ZRANGEBYSCORE command
+	ZRANGEBYSCORE = "ZRANGEBYSCORE"
+	// ZREVRANGEBYSCORE command
+	ZREVRANGEBYSCORE = "ZREVRANGEBYSCORE"
 	// ZCOUNT command
 	ZCOUNT = "ZCOUNT"
 	// SETEX command
@@ -31,6 +31,10 @@ const (
 	GET = "GET"
 	// MGET command
 	MGET = "MGET"
+	// ZRANGE command
+	ZRANGE = "ZRANGE"
+	// ZCARD command
+	ZCARD = "ZCARD"
 	// MaxInfinite is +inf
 	MaxInfinite = "+inf"
 	// MinInfinite is -inf
@@ -120,9 +124,9 @@ func GetSortSet(conn *redis2.Conn, key string, pageNo int, pageRow int, max, min
 
 	var command string
 	if isDESC {
-		command = ZREVRANGE
+		command = ZREVRANGEBYSCORE
 	} else {
-		command = ZRANGE
+		command = ZRANGEBYSCORE
 	}
 	value, err := redis2.Strings((*conn).Do(command, key, maxStr, minStr, LIMIT, (pageNo-1)*pageRow, pageRow))
 	if err != nil {
