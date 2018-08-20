@@ -40,8 +40,8 @@ func NewBaseGorm(connStr string, dbType Type, maxIdleConn, maxOpenConn int, life
 
 }
 
-// NewConn is a func for new conn for connect db
-func (bg *BaseGorm) NewConn() (*gorm.DB, error) {
+// GetDB is a func for connect db
+func (bg *BaseGorm) GetDB() (*gorm.DB, error) {
 	var err error
 	if db == nil {
 		db, err = gorm.Open(string(bg.DBType), bg.ConnStr)
@@ -49,9 +49,15 @@ func (bg *BaseGorm) NewConn() (*gorm.DB, error) {
 			db = nil
 			return nil, err
 		}
-		db.DB().SetMaxIdleConns(bg.MaxIdleConn)
-		db.DB().SetMaxOpenConns(bg.MaxOpenConn)
-		db.DB().SetConnMaxLifetime(bg.LifetimeOfConn)
+		if bg.MaxIdleConn > 0 {
+			db.DB().SetMaxIdleConns(bg.MaxIdleConn)
+		}
+		if bg.MaxOpenConn > 0 {
+			db.DB().SetMaxOpenConns(bg.MaxOpenConn)
+		}
+		if bg.LifetimeOfConn > time.Millisecond {
+			db.DB().SetConnMaxLifetime(bg.LifetimeOfConn)
+		}
 		return db, nil
 	}
 
