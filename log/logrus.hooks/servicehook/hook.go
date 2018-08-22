@@ -56,10 +56,10 @@ func (hook *ErrorLogServiceHook) Fire(entry *logrus.Entry) error {
 		ProjectAddress: hook.Address,
 		Msg:            entry.Message,
 	}
-	if v, ok := entry.Data[logrushooks.ERROR_TRACE_NAME]; ok {
+	if v, ok := entry.Data[logrushooks.ErrorTraceName]; ok {
 		log.Trace = v.(string)
 	}
-	if v, ok := entry.Data[logrushooks.ERROR_ADDINFO_NAME]; ok {
+	if v, ok := entry.Data[logrushooks.ErrorAddInfoName]; ok {
 		log.AdditionalInfo = v.(string)
 	}
 

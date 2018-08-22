@@ -2,10 +2,11 @@ package filehook
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // FileHook is a hook for writing log in local file

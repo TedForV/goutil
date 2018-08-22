@@ -35,6 +35,8 @@ const (
 	ZRANGE = "ZRANGE"
 	// ZCARD command
 	ZCARD = "ZCARD"
+	// ZREMRANGEBYSCORE command
+	ZREMRANGEBYSCORE = "ZREMRANGEBYSCORE"
 	// MaxInfinite is +inf
 	MaxInfinite = "+inf"
 	// MinInfinite is -inf
@@ -159,6 +161,12 @@ func DeleteSortSetItem(conn *redis2.Conn, key string, data interface{}) error {
 	}
 	_, err = (*conn).Do(ZREM, key, value)
 	return err
+}
+
+// RangeScoreDeleteSortedSet delete a rangable items
+func RangeScoreDeleteSortedSet(conn *redis2.Conn, key string, max, min int64) (int, error) {
+	maxStr, minStr := getRange(max, min)
+	return redis2.Int((*conn).Do(ZREMRANGEBYSCORE, key, minStr, maxStr))
 }
 
 func getRange(max, min int64) (string, string) {

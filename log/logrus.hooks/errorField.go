@@ -2,21 +2,28 @@ package logrushooks
 
 import (
 	"fmt"
+
 	"github.com/sirupsen/logrus"
 )
 
 //define additional field in error information
 const (
-	ERROR_TRACE_NAME   = "Trace"
-	ERROR_ADDINFO_NAME = "AdditionalInfo"
+	// ErrorTraceName is the error trace key name
+	ErrorTraceName = "Trace"
+	// ErrorAddInfoName is the error additional info key name
+	ErrorAddInfoName = "AdditionalInfo"
 )
 
+// Recover recover the err with params
 func Recover(params interface{}) {
 	if err := recover(); err != nil {
-		logrus.WithField(ERROR_ADDINFO_NAME, params).WithField(ERROR_TRACE_NAME, fmt.Sprintf("%+v", err)).Error(err)
+		// ErrorTraceName is the error trace key name
+		logrus.WithField(ErrorAddInfoName, fmt.Sprintf("%+v", params)).WithField(ErrorTraceName, fmt.Sprintf("%+v", err)).Error(err)
 	}
 }
 
+// RecordLog record the log with params
 func RecordLog(params interface{}, err error) {
-	logrus.WithField(ERROR_ADDINFO_NAME, fmt.Sprintf("%+v", params)).WithField(ERROR_TRACE_NAME, fmt.Sprintf("%+v", err)).Error(err)
+	// ErrorTraceName is the error trace key name
+	logrus.WithField(ErrorAddInfoName, fmt.Sprintf("%+v", params)).WithField(ErrorTraceName, fmt.Sprintf("%+v", err)).Error(err)
 }

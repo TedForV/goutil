@@ -64,3 +64,10 @@ func (bg *BaseGorm) GetDB() (*gorm.DB, error) {
 	return db, nil
 
 }
+
+// Close close the db connect
+func (bg *BaseGorm) Close() {
+	if db != nil {
+		db.Close()
+	}
+}
