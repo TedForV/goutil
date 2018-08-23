@@ -3,6 +3,8 @@ package logrushooks
 import (
 	"fmt"
 
+	"runtime"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,13 +19,18 @@ const (
 // Recover recover the err with params
 func Recover(params interface{}) {
 	if err := recover(); err != nil {
-		// ErrorTraceName is the error trace key name
-		logrus.WithField(ErrorAddInfoName, fmt.Sprintf("%+v", params)).WithField(ErrorTraceName, fmt.Sprintf("%+v", err)).Error(err)
+		trace, n := getTrace()
+		logrus.WithField(ErrorAddInfoName, fmt.Sprintf("%+v", params)).WithField(ErrorTraceName, fmt.Sprintf("%s", string((*trace)[:n]))).Error(err)
 	}
 }
 
 // RecordLog record the log with params
 func RecordLog(params interface{}, err error) {
-	// ErrorTraceName is the error trace key name
 	logrus.WithField(ErrorAddInfoName, fmt.Sprintf("%+v", params)).WithField(ErrorTraceName, fmt.Sprintf("%+v", err)).Error(err)
+}
+
+func getTrace() (*[800]byte, int) {
+	var trace [800]byte
+	n := runtime.Stack(trace[:], false)
+	return &trace, n
 }
