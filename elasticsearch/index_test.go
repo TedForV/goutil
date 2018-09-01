@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/olivere/elastic"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 var esServer = []string{"http://10.10.11.200:9200"}
@@ -108,32 +110,32 @@ func TestDeleteIndex(t *testing.T) {
 	assert.True(t, result.Acknowledged)
 }
 
-func TestInsertData(t *testing.T) {
-	datas := []News{
-		News{1, "阿斯顿发送到", "阿斯蒂芬", "请问是大法官发"},
-		News{2, "退开奖号狂欢节", "安慰我而过 ", "集合uehfbnv"},
-		News{3, "去玩儿群翁而且问题", "一夜润体乳请问", "把你们，胡椒粉统一"},
-		News{4, "其二冬虫夏草标的", "安慰法行政总厨不在", "宣传部的人如果"},
-		News{5, "阿斯顿发送到", " 玩儿我", "驱蚊器翁群翁群无"},
-		News{6, "阿斯顿发送到", "疼我二哥个", "下次是第三方个人工"},
-		News{7, "全国性交流会议在武汉举办", "疼我二哥个", "下次是第三方个人工"},
-	}
-	InitialESConfig(esServer, true)
-	client, err := GetSLClient()
-	if err != nil {
-		t.Errorf("%+v", err)
-	}
-	for _, v := range datas {
-		ok, id, err := InsertData(client, "news", "new", &v, string(v.Id))
-		if err != nil {
-			t.Errorf("%+v", err)
-		}
-		if !ok {
-			t.Error("insert failed.")
-		}
-		t.Log(id)
-	}
-}
+// func TestInsertData(t *testing.T) {
+// 	datas := []News{
+// 		News{1, "阿斯顿发送到", "阿斯蒂芬", "请问是大法官发"},
+// 		News{2, "退开奖号狂欢节", "安慰我而过 ", "集合uehfbnv"},
+// 		News{3, "去玩儿群翁而且问题", "一夜润体乳请问", "把你们，胡椒粉统一"},
+// 		News{4, "其二冬虫夏草标的", "安慰法行政总厨不在", "宣传部的人如果"},
+// 		News{5, "阿斯顿发送到", " 玩儿我", "驱蚊器翁群翁群无"},
+// 		News{6, "阿斯顿发送到", "疼我二哥个", "下次是第三方个人工"},
+// 		News{7, "全国性交流会议在武汉举办", "疼我二哥个", "下次是第三方个人工"},
+// 	}
+// 	InitialESConfig(esServer, true)
+// 	client, err := GetSLClient()
+// 	if err != nil {
+// 		t.Errorf("%+v", err)
+// 	}
+// 	for _, v := range datas {
+// 		ok, id, err := InsertData(client, "news", "new", &v, string(v.Id))
+// 		if err != nil {
+// 			t.Errorf("%+v", err)
+// 		}
+// 		if !ok {
+// 			t.Error("insert failed.")
+// 		}
+// 		t.Log(id)
+// 	}
+// }
 
 func TestSelectById(t *testing.T) {
 	InitialESConfig(esServer, true)
@@ -141,11 +143,28 @@ func TestSelectById(t *testing.T) {
 	if err != nil {
 		t.Errorf("%+v", err)
 	}
-	getResult, err := client.Get().Index("news").Type("article").Id("100374").Do(context.TODO())
+	getResult, err := client.Get().Index("news").Type("article").Id("1").StoredFields("full_text").Do(context.TODO())
 	if err != nil {
 		t.Errorf("%+v", err)
 	}
-	t.Logf("%+v", getResult)
+	t.Logf("%+v", getResult.Fields)
+	var n News
+	err = json.Unmarshal(*getResult.Source, &n)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Logf("%+v", n)
+	t.Error("err")
+}
+
+type News struct {
+	Id          int       `json:"id"`
+	Title       string    `json:"title"`
+	Source      string    `json:"source"`
+	Author      string    `json:"author"`
+	Keys        string    `json:"keys" gorm:"column:key_words"`
+	Content     string    `json:"content" gorm:"column:details"`
+	PublishTime time.Time `json:"publish_time" gorm:"column:released_time"`
 }
 
 func TestCatIndex(t *testing.T) {
@@ -162,7 +181,7 @@ func TestCatIndex(t *testing.T) {
 }
 
 func TestCommonSearch(t *testing.T) {
-	q := elastic.NewCommonTermsQuery("p_a", "阿送到")
+	q := elastic.NewCommonTermsQuery("full_text", "7月")
 	InitialESConfig(esServer, true)
 	client, err := GetSLClient()
 	if err != nil {
@@ -189,9 +208,42 @@ func TestCommonSearch(t *testing.T) {
 	}
 }
 
-type News struct {
-	Id int    `json:"id"`
-	PA string `json:"p_a"`
-	PB string `json:"p_b"`
-	PC string `json:"p_c"`
+func TestGetCount(t *testing.T) {
+	InitialESConfig(esServer, true)
+	client, err := GetSLClient()
+	if err != nil {
+		t.Error(err)
+	}
+	type args struct {
+		client    *elastic.Client
+		indexName string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			name: "1",
+			args: args{
+				client:    client,
+				indexName: "news",
+			},
+			want:    2221,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetCount(tt.args.client, tt.args.indexName)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetCount() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("GetCount() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

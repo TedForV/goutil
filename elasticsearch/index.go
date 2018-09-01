@@ -3,9 +3,10 @@ package elasticsearch
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/olivere/elastic"
 	"github.com/pkg/errors"
-	"strings"
 )
 
 var esConfig ESConfig
@@ -117,6 +118,15 @@ func GetLLClient() (*elastic.Client, error) {
 // GetSLClient return a short-lived client
 func GetSLClient() (*elastic.Client, error) {
 	return elastic.NewSimpleClient(elastic.SetURL(esConfig.ServerUrls...))
+}
+
+// GetCount return count for certain index
+func GetCount(client *elastic.Client, indexName string) (int, error) {
+	rsp, err := elastic.NewCatCountService(client).Index(indexName).Do(context.TODO())
+	if err != nil {
+		return 0, err
+	}
+	return rsp[0].Count, nil
 }
 
 type ESConfig struct {
