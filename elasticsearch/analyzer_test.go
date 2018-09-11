@@ -28,7 +28,7 @@ func TestAnalyzerText(t *testing.T) {
 			name: "1",
 			args: args{
 				client:  *client,
-				content: "7月12日",
+				content: "综合税费成本包括税收、社会保险费用、政府性基金和行政性收费、行政性灰色隐性寻租成本、办事难的制度性交易成本等。",
 			},
 			want:    []string{},
 			wantErr: false,

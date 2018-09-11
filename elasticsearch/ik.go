@@ -1,6 +1,6 @@
 package elasticsearch
 
 const (
-	IK_SMART_MODE = "ik_smart"
-	IK_MAX_MODE   = "ik_max_word"
+	IKSmart   = "ik_smart"
+	IKMaxWrod = "ik_max_word"
 )
