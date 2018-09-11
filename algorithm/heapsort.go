@@ -18,20 +18,45 @@ func UpAdjust(arr []int) {
 }
 
 // DownAdjust downadjust the node (replace the root node with last node)
-func DownAdjust(arr []int, parentIndex int) {
-	length := len(arr)
-	if length <= parentIndex+1 {
+// func DownAdjust(arr []int, parentIndex int) {
+// 	length := len(arr)
+// 	if length <= parentIndex+1 {
+// 		return
+// 	}
+// 	childIndex := parentIndex*2 + 1
+// 	if length < childIndex+1 {
+// 		return
+// 	}
+// 	for {
+// 		if length < childIndex+1 {
+// 			break
+// 		}
+// 		if childIndex+2 <= length && arr[childIndex] > arr[childIndex+1] {
+// 			childIndex++
+// 		}
+// 		if arr[parentIndex] <= arr[childIndex] {
+// 			break
+// 		}
+// 		arr[childIndex], arr[parentIndex] = arr[parentIndex], arr[childIndex]
+// 		parentIndex = childIndex
+// 		childIndex = parentIndex*2 + 1
+// 	}
+// }
+
+// DownAdjust downadjust the node (replace the root node with last node)
+func DownAdjust(arr []int, parentIndex int, validLength int) {
+	if validLength <= parentIndex+1 {
 		return
 	}
 	childIndex := parentIndex*2 + 1
-	if length < childIndex+1 {
+	if validLength < childIndex+1 {
 		return
 	}
 	for {
-		if length < childIndex+1 {
+		if validLength < childIndex+1 {
 			break
 		}
-		if childIndex+2 <= length && arr[childIndex] > arr[childIndex+1] {
+		if childIndex+2 <= validLength && arr[childIndex] > arr[childIndex+1] {
 			childIndex++
 		}
 		if arr[parentIndex] <= arr[childIndex] {
@@ -49,7 +74,16 @@ func BuildHeap(arr []int) {
 		return
 	}
 	for i := len(arr) / 2; i >= 0; i-- {
-		DownAdjust(arr, i)
+		DownAdjust(arr, i, len(arr))
+	}
+}
+
+// HeapSort is heap sort
+func HeapSort(arr []int) {
+	BuildHeap(arr)
+	for i := len(arr) - 1; i > 0; i-- {
+		arr[i], arr[0] = arr[0], arr[i]
+		DownAdjust(arr, 0, i)
 	}
 }
 
