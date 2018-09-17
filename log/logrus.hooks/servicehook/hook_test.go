@@ -14,13 +14,13 @@ import (
 
 func TestNewErrorLogServiceHook(t *testing.T) {
 	hook := NewErrorLogServiceHook(100, 100, "gRPC", &kit.ETCD3Config{
-		Servers:       []string{"10.10.10.11:2379"},
+		Servers:       []string{"10.10.10.11:2379", "10.10.10.12:2379", "10.10.11.200:2379"},
 		DialKeepAlive: time.Second * 3,
 		DialTimeout:   time.Second * 3,
 	}, "/service/log")
 	logrus.AddHook(hook)
 
-	logrus.WithField(logrushooks.ERROR_TRACE_NAME, "Trace details...").Error("ms error log test")
+	logrus.WithField(logrushooks.ErrorTraceName, "Trace details...").Error("ms error log test")
 }
 
 func TestClient(t *testing.T) {

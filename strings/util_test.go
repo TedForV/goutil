@@ -1,8 +1,9 @@
 package strings
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReverse(t *testing.T) {
@@ -19,13 +20,13 @@ func TestIsValidMobile(t *testing.T) {
 }
 
 func TestNewUUID(t *testing.T) {
-	s, err := NewUUID(UUID_TYPE_CANONICAL)
+	s, err := NewUUID(UUIDTypeCanonical)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	t.Log(s)
-	s, err = NewUUID(UUID_TYPE_HASH_LIKE)
+	s, err = NewUUID(UUIDTypeHashLike)
 	if err != nil {
 		t.Error(err)
 		return

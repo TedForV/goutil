@@ -1,9 +1,10 @@
 package strings
 
 import (
-	"github.com/satori/go.uuid"
 	"regexp"
 	"strings"
+
+	"github.com/satori/go.uuid"
 )
 
 // Reverse return a reserved string
@@ -15,12 +16,12 @@ func Reverse(s string) string {
 	return string(reverse(r))
 }
 
-// MOBILE_REGEX  define mobile regex
-const MOBILE_REGEX = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9])|(17[0-9]))\\d{8}$"
+// MobileReg  define mobile regex
+const MobileReg = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9])|(17[0-9]))\\d{8}$"
 
 // IsValidMobile returns a string is a phone No. or not
 func IsValidMobile(mobileNo string) bool {
-	reg := regexp.MustCompile(MOBILE_REGEX)
+	reg := regexp.MustCompile(MobileReg)
 	return reg.MatchString(mobileNo)
 }
 
@@ -29,8 +30,8 @@ type UUIDType int
 
 // define the uuid types
 const (
-	UUID_TYPE_HASH_LIKE UUIDType = iota
-	UUID_TYPE_CANONICAL
+	UUIDTypeHashLike UUIDType = iota
+	UUIDTypeCanonical
 )
 
 // NewUUID is a func that create a new uuid and returns
@@ -40,9 +41,9 @@ func NewUUID(t UUIDType) (string, error) {
 		return "", err
 	}
 	switch t {
-	case UUID_TYPE_HASH_LIKE:
+	case UUIDTypeHashLike:
 		return strings.Replace(id.String(), "-", "", -1), nil
-	case UUID_TYPE_CANONICAL:
+	case UUIDTypeCanonical:
 		return id.String(), nil
 	}
 	return id.String(), nil

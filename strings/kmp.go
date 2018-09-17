@@ -17,6 +17,7 @@ func GetNext(pattern []rune) []int {
 	return next
 }
 
+// GetImprovedNext improved method for Next
 func GetImprovedNext(pattern []rune) []int {
 	l := len(pattern)
 	next := make([]int, l)
@@ -37,6 +38,7 @@ func GetImprovedNext(pattern []rune) []int {
 	return next
 }
 
+// KMPSearch search substring by KMP algorithm
 func KMPSearch(content string, pattern string) int {
 	cr, pr := []rune(content), []rune(pattern)
 	next := GetNext(pr)
@@ -50,11 +52,12 @@ func KMPSearch(content string, pattern string) int {
 	}
 	if j == pl {
 		return i - j
-	} else {
-		return -1
 	}
+	return -1
+
 }
 
+// KMPImprovedSearch improved kmp search
 func KMPImprovedSearch(content string, pattern string) int {
 	cr, pr := []rune(content), []rune(pattern)
 	next := GetImprovedNext(pr)
@@ -68,7 +71,7 @@ func KMPImprovedSearch(content string, pattern string) int {
 	}
 	if j == pl {
 		return i - j
-	} else {
-		return -1
 	}
+	return -1
+
 }

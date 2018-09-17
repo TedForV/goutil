@@ -1,5 +1,6 @@
 package strings
 
+// SundaySearch is search by Sunday
 func SundaySearch(content string, pattern string) int {
 	cr, pr := []rune(content), []rune(pattern)
 	ci, pi, cl, pl := 0, 0, len(cr), len(pr)
@@ -27,7 +28,7 @@ func SundaySearch(content string, pattern string) int {
 	}
 	if pi == pl {
 		return ci - pi
-	} else {
-		return -1
 	}
+	return -1
+
 }
