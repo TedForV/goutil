@@ -118,8 +118,8 @@ func TestTrie_FindAllExisted(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.trie.FindAllExisted(tt.args.content)
-			t.Error(got)
+			tt.trie.FindAllExisted(tt.args.content)
+			//t.Error(got)
 		})
 	}
 }
