@@ -3,6 +3,8 @@ go:
   - "1.10.x"
 script:
   - go test ./strings
+  - go test ./set
+  - go test ./algorithm
 notifications:
   email:
     recipients:
