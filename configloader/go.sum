@@ -1,0 +1,9 @@
+github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
+github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/TedForV/goutil v1.0.0 h1:pNKgzlHRN8hmVPI2YVFeod6RutmPg0h0W00rETfEI9M=
+github.com/TedForV/goutil v1.0.0/go.mod h1:o+X3knAdtMoRKC/7LIo+fq+GYUiDDXccsC+y6wrIHV8=
+github.com/jinzhu/configor v0.0.0-20180614024415-4edaf76fe188 h1:XFhKsrhg0SBbAGFKWbwK81YkfbNyO2QItYQ05jqbpAU=
+github.com/jinzhu/configor v0.0.0-20180614024415-4edaf76fe188/go.mod h1:xycrO0mK6seJRAHXsdyk54QgPJ20aQNpTGi5xv8jQg8=
+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
+gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
