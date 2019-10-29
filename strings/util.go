@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Reverse return a reserved string
@@ -35,18 +35,15 @@ const (
 )
 
 // NewUUID is a func that create a new uuid and returns
-func NewUUID(t UUIDType) (string, error) {
-	id, err := uuid.NewV1()
-	if err != nil {
-		return "", err
-	}
+func NewUUID(t UUIDType) string {
+	id := uuid.NewV1()
 	switch t {
 	case UUIDTypeHashLike:
-		return strings.Replace(id.String(), "-", "", -1), nil
+		return strings.Replace(id.String(), "-", "", -1)
 	case UUIDTypeCanonical:
-		return id.String(), nil
+		return id.String()
 	}
-	return id.String(), nil
+	return id.String()
 }
 
 func reverse(r []rune) []rune {
