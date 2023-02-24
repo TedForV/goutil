@@ -37,7 +37,7 @@ require (
 	go.etcd.io/etcd v3.3.17+incompatible // indirect
 	go.uber.org/multierr v1.2.0 // indirect
 	go.uber.org/zap v1.11.0 // indirect
-	golang.org/x/net v0.0.0-20191027233614-53de4c7853b5
+	golang.org/x/net v0.7.0
 	google.golang.org/grpc v1.24.0
 	sigs.k8s.io/yaml v1.1.0 // indirect
 )
